@@ -4,10 +4,7 @@
 from __future__ import unicode_literals
 
 from flask import Flask
-from flask.ext.sqlalchemy import SQLAlchemy
 from werkzeug.utils import import_string
-
-from clinstat.models import Base
 
 class AppFactory(object):
 
@@ -22,12 +19,11 @@ class AppFactory(object):
         self.app_config = config
         self.app.config.from_pyfile(config)
 
-        # set up SQLAlchemy
-        db = SQLAlchemy(self.app)
-        db.Model = Base
-
         # set up blueprints
         self._register_blueprints()
+
+        # set up extensions: db, ...
+        self._bind_extensions()
 
         return self.app
 
@@ -45,6 +41,20 @@ class AppFactory(object):
             self.app.register_blueprint(getattr(module, object_name))
         else:
             raise NoBlueprintException("No %s blueprint found" % object_name)
+
+    def _bind_extensions(self):
+        for ext_path in self.app.config.get('EXTENSIONS', []):
+            module, object_name = self._get_imported_stuff_by_path(ext_path)
+
+        if not hasattr(module, object_name):
+            raise NoExtensionException("No %s extension found" % object_name)
+
+        extension = getattr(module, object_name)
+
+        if getattr(extension, 'init_app', False):
+           extension.init_app(self.app)
+        else:
+           extension(self.app)
 
 if __name__ == '__main__':
     app.run()

@@ -8,5 +8,6 @@ core = Blueprint('core', __name__, template_folder='templates')
 
 @core.route('/')
 def index():
-    return 'Hello world!'
+    return 'Projects #{}'.format(Project.query.all())
+
 
