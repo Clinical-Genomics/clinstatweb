@@ -10,6 +10,11 @@ class Project(db.Model):
     projectname = db.Column(db.String(255), nullable=False)
     time = db.Column(db.DateTime, nullable=False)
 
+    sample = db.relationship('Sample', backref=db.backref('samples'))
+
+    def __repr__(self):
+        return (u'{self.__class__.__name__}: {self.project_id}'.format(self=self))
+
 class Sample(db.Model):
     __tablename__ = 'sample'
 
@@ -18,6 +23,8 @@ class Sample(db.Model):
     samplename = db.Column(db.String(255), nullable=False)
     barcode = db.Column(db.String(255), nullable=True)
     time = db.Column(db.DateTime, nullable=True)
+
+
 
 class Supportparams(db.Model):
     __tablename__ = 'supportparams'
@@ -47,11 +54,16 @@ class Datasource(db.Model):
     server = db.Column(db.String(255), nullable=True)
     time = db.Column(db.DateTime, nullable=True)
 
+    flowcell = db.relationship('Flowcell', backref=db.backref('flowcells'))
+
+    def __repr__(self):
+        return (u'{self.__class__.__name__}: {self.runname}'.format(self=self))
+
 class Flowcell(db.Model):
     __tablename__ = 'flowcell'
 
     flowcell_id = db.Column(db.Integer, primary_key=True)
-    datasource_id = db.Column(db.Integer, db.ForeignKey('datasource.datasource_id'), nullable=False)
+    datasource_id = db.Column(db.Integer, db.ForeignKey('datasource.datasource_id', name='datasource'), nullable=False)
     flowcellname = db.Column(db.String(255), nullable=False)
     flowcell_pos = db.Column(db.Enum('A', 'B'), nullable=False)
     time_start = db.Column(db.DateTime, nullable=True)
