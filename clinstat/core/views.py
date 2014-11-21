@@ -20,7 +20,7 @@ def runs():
     ORDER BY YEAR(rundate), MONTH(rundate);"""
 
     rs = ''
-    for row in Datasource.query.join(Flowcell.datasource).all():
+    for row in Datasource.query.join(Flowcell.datasource).group_by(Datasource.rundate).all():
         rs += format(row)
 
     return rs
