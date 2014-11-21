@@ -1,7 +1,9 @@
 # encoding: utf-8
 
 from flask import Blueprint, url_for
+from flask.ext.sqlalchemy import get_debug_queries
 
+from ..extensions import db
 from ..models import Project, Datasource, Flowcell, Unaligned
 
 core = Blueprint('core', __name__, template_folder='templates')
@@ -18,10 +20,14 @@ def runs():
     LEFT JOIN unaligned ON unaligned.flowcell_id = flowcell.flowcell_id
     GROUP BY YEAR(rundate), MONTH(rundate)
     ORDER BY YEAR(rundate), MONTH(rundate);"""
-
     rs = ''
-    for row in Datasource.query.join(Flowcell.datasource).group_by(Datasource.rundate).all():
+    for row in Datasource.query.\
+            join(Flowcell).\
+            join(Unaligned).\
+            group_by(db.func.year(Datasource.rundate), db.func.month(Datasource.rundate)).\
+            order_by(db.func.year(Datasource.rundate), db.func.month(Datasource.rundate)).\
+            all():
         rs += format(row)
+    print(get_debug_queries())
 
     return rs
-
