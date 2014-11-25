@@ -33,7 +33,7 @@ def runs():
             join(Flowcell).\
             join(Unaligned).\
             group_by(db.func.year(Datasource.rundate), db.func.month(Datasource.rundate)).\
-            order_by(db.func.year(Datasource.rundate), db.func.month(Datasource.rundate)).\
+            order_by(db.func.year(Datasource.rundate).desc(), db.func.month(Datasource.rundate).desc()).\
             all()
 
     return dict(out=rs)
