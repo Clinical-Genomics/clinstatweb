@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-from __future__ import unicode_literals, absolute_import
-
 import os
 
 from flask import Flask
@@ -20,14 +18,10 @@ class AppFactory(object):
         self.app_config = config
         self.app = Flask(app_name or DevelopmentConfig.PROJECT, instance_relative_config=True, **kwargs)
 
-        # config
+        # hooks ...
         self._configure_app()
-
-        # set up blueprints
-        self._register_blueprints()
-
-        # set up extensions: db, ...
         self._bind_extensions()
+        self._register_blueprints()
 
         return self.app
 
@@ -72,4 +66,5 @@ class AppFactory(object):
            extension(self.app)
 
 if __name__ == '__main__':
+    app = AppFactory()
     app.run()
