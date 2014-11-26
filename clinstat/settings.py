@@ -15,8 +15,8 @@ class BaseConfig(object):
 
   BLUEPRINTS = ['clinstat.core.core']
 
-  EXTENSIONS = ['clinstat.extensions.db',
-                'clinstat.extensions.ssl']
+  EXTENSIONS = ['clinstat.extensions.toolbar',
+                'clinstat.extensions.db']
 
 
 class DevelopmentConfig(BaseConfig):
