@@ -16,8 +16,8 @@ class BaseConfig(object):
   BLUEPRINTS = ['clinstat.core.core']
 
   EXTENSIONS = ['clinstat.extensions.toolbar',
-                'clinstat.extensions.db',
-                'clinstat.extensions.ssl']
+                'clinstat.extensions.ssl',
+                'clinstat.extensions.db']
 
 class DevelopmentConfig(BaseConfig):
   """docstring for DefaultConfig"""
