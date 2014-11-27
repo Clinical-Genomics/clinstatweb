@@ -1,3 +1,4 @@
+from __future__ import absolute_import, unicode_literals
 import os
 
 
@@ -5,9 +6,9 @@ class BaseConfig(object):
   """docstring for BaseConfig"""
   PROJECT = 'clinstatweb'
 
-  #APP_DIR = os.path.abspath(os.path.dirname(__file__))  # this directory
+  APP_DIR = os.path.abspath(os.path.dirname(__file__))  # this directory
   # get app root path (can also use flask_root_path) => ../../config.py
-  #PROJECT_ROOT = os.path.abspath(os.path.join(APP_DIR, os.pardir))
+  PROJECT_ROOT = os.path.abspath(os.path.join(APP_DIR, os.pardir))
 
   DEBUG = False
   TESTING = False
@@ -15,8 +16,8 @@ class BaseConfig(object):
   BLUEPRINTS = ['clinstat.core.core']
 
   EXTENSIONS = ['clinstat.extensions.toolbar',
-                'clinstat.extensions.db']
-
+                'clinstat.extensions.db',
+                'clinstat.extensions.ssl']
 
 class DevelopmentConfig(BaseConfig):
   """docstring for DefaultConfig"""
