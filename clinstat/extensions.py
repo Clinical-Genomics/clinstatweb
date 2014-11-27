@@ -24,7 +24,7 @@ from OpenSSL import SSL
 ctx = SSL.Context(SSL.SSLv23_METHOD)
 
 def ssl(app):
-# Setup SSL: http://flask.pocoo.org/snippets/111/
+    # Setup SSL: http://flask.pocoo.org/snippets/111/
     ctx.use_privatekey_file(app.config.get('SSL_KEY_PATH'))
     ctx.use_certificate_file(app.config.get('SSL_CERT_PATH'))
 
