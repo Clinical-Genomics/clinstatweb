@@ -57,15 +57,15 @@ class AppFactory(object):
         for ext_path in self.app.config.get('EXTENSIONS', []):
             module, object_name = self._get_imported_stuff_by_path(ext_path)
 
-        if not hasattr(module, object_name):
-            raise NoExtensionException("No %s extension found" % object_name)
-
-        extension = getattr(module, object_name)
-
-        if getattr(extension, 'init_app', False):
-           extension.init_app(self.app)
-        else:
-           extension(self.app)
+            if not hasattr(module, object_name):
+                raise NoExtensionException("No %s extension found" % object_name)
+    
+            extension = getattr(module, object_name)
+    
+            if getattr(extension, 'init_app', False):
+               extension.init_app(self.app)
+            else:
+               extension(self.app)
 
 if __name__ == '__main__':
     app = AppFactory()
