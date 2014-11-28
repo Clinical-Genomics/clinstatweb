@@ -24,7 +24,7 @@ class SecureServer(Server):
     # Run the original ``__call__`` function
     super(SecureServer, self).__call__(app, *args, **kwargs)
 
-manager.add_command('serve', SecureServer(ssl_context=ctx))
+manager.add_command('serve', SecureServer(ssl_context=ctx, host='0.0.0.0'))
 manager.add_option(
     '-c', '--config', dest='config', required=False, help='Config file path')
 

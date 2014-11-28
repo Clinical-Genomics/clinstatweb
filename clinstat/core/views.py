@@ -11,11 +11,11 @@ from ..helpers import templated
 
 core = Blueprint('core', __name__, template_folder='templates')
 
-@core.route('/')
+@core.route('/projects')
 def index():
     return 'Projects #{}'.format(Project.query.all())
 
-@core.route('/runs')
+@core.route('/')
 @templated('runs.html')
 def runs():
     """SELECT YEAR(rundate) AS year, MONTH(rundate) AS month, COUNT(DISTINCT datasource.datasource_id) AS runs, ROUND(SUM(readcounts/2000000),2) AS 'Mil reads'
