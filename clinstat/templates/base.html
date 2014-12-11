@@ -9,23 +9,26 @@
 
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}"></script>
 
   {% block extra_head %}{% endblock extra_head %}
 </head>
 <body>
-  <div id="main">
-    <div class="utility-nav navbar navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container">
-          {# Navbar goes here. #}
-        </div>
+  <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="/">Clinical Genomics</a>
       </div>
+      <div id="navbar" class="navbar-collapse collapse">
+        <ul class="nav navbar-nav">
+          <li><a href="/projects">Projects</a></li>
+        </ul>
+      </div><!--/.nav-collapse -->
     </div>
+  </nav>
 
-    <div class="content container">
-      {% block main %}{% endblock main %}
-    </div>
-
+  <div class="content container">
+    {% block main %}{% endblock main %}
   </div>
 
   <!-- JS bottom -->
