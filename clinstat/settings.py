@@ -14,6 +14,9 @@ class BaseConfig(object):
 
   BLUEPRINTS = ['clinstat.core.core']
 
+  # http://flask.pocoo.org/docs/quickstart/#sessions
+  SECRET_KEY = 'secret key'
+
   EXTENSIONS = ['clinstat.extensions.toolbar',
                 'clinstat.extensions.ssl',
                 'clinstat.extensions.db']
