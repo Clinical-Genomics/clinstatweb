@@ -7,13 +7,15 @@
         <th>MONTH</th>
         <th>RUNS</th>
         <th>Mil reads</th>
+        <th>Mil reads / fc lane</th>
     </tr>
     {% for row in out %}
     <tr>
-        <td>{{ row[0] }}</td>
-        <td>{{ row[1] }}</td>
-        <td>{{ row[2] }}</td>
-        <td>{{ row[3] }}</td>
+        <td>{{ row['year'] }}</td>
+        <td>{{ row['month'] }}</td>
+        <td>{{ row['runs'] }}</td>
+        <td>{{ row['mil reads'] }}</td>
+        <td>{{ row['mil reads fc lane'] }}</td>
     </tr>
     {% endfor %}
 </table>
