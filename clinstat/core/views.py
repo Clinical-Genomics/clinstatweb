@@ -28,7 +28,7 @@ def runs():
                 db.func.year(Datasource.rundate),\
                 db.func.month(Datasource.rundate),\
                 db.func.count(Datasource.datasource_id.distinct()),\
-                db.func.round(db.func.sum(Unaligned.readcounts / 20000000), 2)
+                db.func.round(db.func.sum(Unaligned.readcounts / 2000000), 2)
             ).\
             join(Flowcell).\
             join(Unaligned).\
