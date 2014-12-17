@@ -1,21 +1,22 @@
 {%extends 'base.html' %}
 {% block title %}Run stats{% endblock title %}
 {% block main %}
-<table class="table table-striped"
+<table class="table table-striped">
     <tr>
-        <th>YEAR</th>
-        <th>MONTH</th>
-        <th>RUNS</th>
-        <th>Mil reads</th>
+        <th>Date</th>
+        <th>Run name</th>
+        <th>Runs</th>
+        <th>Flowcell</th>
+        <th>Lane</th>
+        <th>readcounts</th>
         <th>Mil reads / fc lane</th>
-        <th>YEAR</th>
-        <th>MONTH</th>
-        <th>RUNS</th>
-        <th>Mil reads</th>
-        <th>Mil reads / fc lane</th>
+        <th>q30 %</th>
+        <th>Runs</th>
+        <th>q30 Mil reads / fc lane</th>
     </tr>
     {% for row in out %}
     <tr>
+        <td>{{ row[9] }}</td>
         <td>{{ row[0] }}</td>
         <td>{{ row[1] }}</td>
         <td>{{ row[2] }}</td>
@@ -25,7 +26,6 @@
         <td>{{ row[6] }}</td>
         <td>{{ row[7] }}</td>
         <td>{{ row[8] }}</td>
-        <td>{{ row[9] }}</td>
     </tr>
     {% endfor %}
 </table>

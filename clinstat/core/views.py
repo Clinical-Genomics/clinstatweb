@@ -81,7 +81,7 @@ def q30():
         else:
             fcq30 = 0
         rows.append( 
-            (row[8], row[0], row[1], row[2], row[3], row[4], row[5], "{0:.2f}".format(fcq30), row[7], "{0:.2f}".format(float(row[5])*float(fcq30)/100) )
+            (row[0], row[1], row[2], row[3], row[4], row[5], "{0:.2f}".format(fcq30), row[7], "{0:.2f}".format(float(row[5])*float(fcq30)/100), row[8] )
         )
 
     return dict(out=rows)
