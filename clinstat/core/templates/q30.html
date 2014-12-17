@@ -1,0 +1,32 @@
+{%extends 'base.html' %}
+{% block title %}Run stats{% endblock title %}
+{% block main %}
+<table class="table table-striped"
+    <tr>
+        <th>YEAR</th>
+        <th>MONTH</th>
+        <th>RUNS</th>
+        <th>Mil reads</th>
+        <th>Mil reads / fc lane</th>
+        <th>YEAR</th>
+        <th>MONTH</th>
+        <th>RUNS</th>
+        <th>Mil reads</th>
+        <th>Mil reads / fc lane</th>
+    </tr>
+    {% for row in out %}
+    <tr>
+        <td>{{ row[0] }}</td>
+        <td>{{ row[1] }}</td>
+        <td>{{ row[2] }}</td>
+        <td>{{ row[3] }}</td>
+        <td>{{ row[4] }}</td>
+        <td>{{ row[5] }}</td>
+        <td>{{ row[6] }}</td>
+        <td>{{ row[7] }}</td>
+        <td>{{ row[8] }}</td>
+        <td>{{ row[9] }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock main %}
