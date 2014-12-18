@@ -1,6 +1,14 @@
 {%extends 'base.html' %}
 {% block title %}Run stats{% endblock title %}
 {% block main %}
+<div class="navbar-collapse collapse">
+    <ul class="nav navbar-nav">
+        <li><a href="{{ url_for('.q30') }}">All</a></li>
+    {% for machine in machines %}
+        <li><a href="?machine={{ machine }}">{{ machine }}</a></li>
+    {% endfor %}
+    <ul>
+</div>
 <table id="q30table" class="table table-striped tablesorter">
     <thead>
     <tr>

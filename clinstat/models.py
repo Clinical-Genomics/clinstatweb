@@ -46,6 +46,7 @@ class Datasource(db.Model):
     datasource_id = db.Column(db.Integer, primary_key=True)
     supportparams_id = db.Column(db.Integer, db.ForeignKey('supportparams.supportparams_id'), nullable=False)
     runname = db.Column(db.String(255), nullable=True)
+    machine = db.Column(db.String(255), nullable=True)
     rundate = db.Column(db.DateTime, nullable=True)
     document_path = db.Column(db.String(255), nullable=False)
     document_type = db.Column(db.Enum('html', 'xml', 'undefined'), nullable=False, default='html')

@@ -2,8 +2,9 @@
 
 from __future__ import absolute_import, unicode_literals
 
-from flask import Blueprint, url_for
+from flask import Blueprint, url_for, request
 from flask.ext.sqlalchemy import get_debug_queries
+from sqlalchemy import or_
 
 from ..extensions import db
 from ..models import Project, Datasource, Flowcell, Unaligned
@@ -45,6 +46,10 @@ def runs():
 @templated('q30.html')
 def q30():
 
+    machinenames = []
+    if 'machine' in request.args:
+        machinenames.append(Datasource.machine == request.args['machine'])
+
     """ SELECT runname, DISTINCT datasource.datasource_id) AS runs,
     flowcellname, lane, SUM(readcounts),
     ROUND(SUM(readcounts)/(2000000),1) AS "mil reads/fc lane",
@@ -66,6 +71,7 @@ def q30():
         ).\
         outerjoin(Flowcell).\
         outerjoin(Unaligned).\
+        filter(or_(*machinenames)).\
         group_by(Unaligned.flowcell_id, Unaligned.lane).\
         order_by(Datasource.rundate.desc(), Flowcell.flowcellname, Unaligned.lane).\
         all()
@@ -84,7 +90,18 @@ def q30():
             (row.run_number, row.rundate, row.runname, row.flowcellname, row.lane, row.readcounts, row.mil_reads_fc_lane, "{0:.2f}".format(fcq30), "{0:.2f}".format(float(row.mil_reads_fc_lane)*float(fcq30)/100))
         )
 
-    return dict(out=rows)
+
+    """ SELECT DISTINCT machine FROM datasource """
+    machines_rs = db.session.query(
+            Datasource.machine.distinct().label('machine_name')
+        ).\
+        order_by(Datasource.machine).\
+        all()
+
+    machines = [ row.machine_name for row in machines_rs ]
+
+
+    return dict(out=rows, machines=machines)
 
 
 
