@@ -5,7 +5,7 @@
     <ul class="nav navbar-nav">
         <li><a href="{{ url_for('.q30') }}">All</a></li>
     {% for machine in machines %}
-        <li><a href="?machine={{ machine }}">{{ machine }}</a></li>
+    <li><a href="{{ url_for('.q30', machinename=machine) }}">{{ machine }}</a></li>
     {% endfor %}
     <ul>
 </div>

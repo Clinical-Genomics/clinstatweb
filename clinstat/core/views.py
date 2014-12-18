@@ -43,12 +43,13 @@ def runs():
     return dict(out=rs)
 
 @core.route('/q30')
+@core.route('/q30/<machinename>')
 @templated('q30.html')
-def q30():
+def q30(machinename=None):
 
     machinenames = []
-    if 'machine' in request.args:
-        machinenames.append(Datasource.machine == request.args['machine'])
+    if machinename is not None:
+        machinenames.append(Datasource.machine == machinename)
 
     """ SELECT runname, DISTINCT datasource.datasource_id) AS runs,
     flowcellname, lane, SUM(readcounts),
