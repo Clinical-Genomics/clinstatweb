@@ -44,7 +44,8 @@ def runs():
 @core.route('/q30')
 @templated('q30.html')
 def q30():
-    """ SELECT runname, COUNT(DISTINCT datasource.datasource_id) AS runs,
+
+    """ SELECT runname, DISTINCT datasource.datasource_id) AS runs,
     flowcellname, lane, SUM(readcounts),
     ROUND(SUM(readcounts)/(2000000),1) AS "mil reads/fc lane",
     GROUP_CONCAT(q30_bases_pct*readcounts), datasource.datasource_id, rundate
@@ -54,34 +55,33 @@ def q30():
     GROUP BY unaligned.flowcell_id, lane
     ORDER BY rundate, flowcellname, lane """
     rs = db.session.query(
-            Datasource.runname,\
-            db.func.count(Datasource.datasource_id.distinct()).label('runs'),\
-            Flowcell.flowcellname,\
-            Unaligned.lane,\
-            db.func.sum(Unaligned.readcounts),\
-            db.func.round(db.func.sum(Unaligned.readcounts)/(2000000), 1).label('mil reads fc lane'),\
-            db.func.group_concat(Unaligned.q30_bases_pct*Unaligned.readcounts),\
-            Datasource.datasource_id,\
-            Datasource.rundate\
+            Datasource.runname.label('runname'),\
+            Flowcell.flowcellname.label('flowcellname'),\
+            Unaligned.lane.label('lane'),\
+            db.func.sum(Unaligned.readcounts).label('readcounts'),\
+            db.func.round(db.func.sum(Unaligned.readcounts)/(2000000), 1).label('mil_reads_fc_lane'),\
+            db.func.group_concat(Unaligned.q30_bases_pct*Unaligned.readcounts).label('q30_readcounts'),\
+            Datasource.datasource_id.label('run_number'),\
+            Datasource.rundate.label('rundate')\
         ).\
         outerjoin(Flowcell).\
         outerjoin(Unaligned).\
         group_by(Unaligned.flowcell_id, Unaligned.lane).\
-        order_by(Datasource.rundate, Flowcell.flowcellname, Unaligned.lane).\
+        order_by(Datasource.rundate.desc(), Flowcell.flowcellname, Unaligned.lane).\
         all()
 
     rows = []
     for row in rs:
-        q30joined = row[6].split(',')
+        q30joined = row.q30_readcounts.split(',')
         q30sum = 0
         for q30s in q30joined:
             q30sum += float(q30s)
-        if int(row[4]) > 0:
-            fcq30 = q30sum/int(row[4])
+        if int(row.readcounts) > 0:
+            fcq30 = q30sum/int(row.readcounts)
         else:
             fcq30 = 0
         rows.append( 
-            (row[0], row[1], row[2], row[3], row[4], row[5], "{0:.2f}".format(fcq30), row[7], "{0:.2f}".format(float(row[5])*float(fcq30)/100), row[8] )
+            (row.run_number, row.rundate, row.runname, row.flowcellname, row.lane, row.readcounts, row.mil_reads_fc_lane, "{0:.2f}".format(fcq30), "{0:.2f}".format(float(row.mil_reads_fc_lane)*float(fcq30)/100))
         )
 
     return dict(out=rows)
