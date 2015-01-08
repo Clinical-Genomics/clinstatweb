@@ -25,10 +25,23 @@
     </thead>
     <tbody>
     {% for row in out %}
+    {% if row['q30 %']|float < 60.0 %}
+    {% set q30class = 'q30ugly' %}
+    {% elif row['q30 %']|float < 90.0 %}
+    {% set q30class = 'q30bad' %}
+    {% else %}
+    {% set q30class = 'q30good' %}
+    {% endif %}
     <tr>
-        {% for item in row %}
-        <td>{{ item }}</td>
-        {% endfor %}
+        <td>{{ row['run number'] }}</td>
+        <td>{{ row['run date'] }}</td>
+        <td>{{ row['run name'] }}</td>
+        <td>{{ row['flowcell name'] }}</td>
+        <td>{{ row['lane'] }}</td>
+        <td>{{ row['readcounts'] }}</td>
+        <td>{{ row['mil reads fc lane'] }}</td>
+        <td class="{{ q30class }}">{{ row['q30 %'] }}</td>
+        <td>{{ row['q30 mil reads fc lane'] }}</td>
     </tr>
     {% endfor %}
     </tbody>

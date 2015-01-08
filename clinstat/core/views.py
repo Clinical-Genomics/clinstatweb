@@ -88,7 +88,17 @@ def q30(machinename=None):
         else:
             fcq30 = 0
         rows.append( 
-            (row.run_number, row.rundate, row.runname, row.flowcellname, row.lane, row.readcounts, row.mil_reads_fc_lane, "{0:.2f}".format(fcq30), "{0:.2f}".format(float(row.mil_reads_fc_lane)*float(fcq30)/100))
+            {
+                'run number': row.run_number,
+                'run date': row.rundate,
+                'run name': row.runname,
+                'flowcell name': row.flowcellname,
+                'lane': row.lane,
+                'readcounts': row.readcounts,
+                'mil reads fc lane': row.mil_reads_fc_lane,
+                'q30 %': "{0:.2f}".format(fcq30),
+                'q30 mil reads fc lane': "{0:.2f}".format(float(row.mil_reads_fc_lane) * float(fcq30)/100)
+            }
         )
 
 

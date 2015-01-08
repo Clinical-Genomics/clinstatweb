@@ -1,3 +1,15 @@
 body {
   padding-top: 70px;
 }
+
+.q30good {
+    background: #DFF0D8;
+}
+
+.q30bad {
+    background: #FCF8E3;
+}
+
+.q30ugly {
+    background: #FCE3E6;
+}
