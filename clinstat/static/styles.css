@@ -13,3 +13,16 @@ body {
 .q30ugly {
     background: #FCE3E6;
 }
+
+.highlight-row {
+    background: #FCF8E3;
+    -o-transition-duration: 0.8s;
+    -moz-transition-duration: 0.8s;
+    -ms-transition-duration: 0.8s;
+    -webkit-transition-duration: 0.8s;
+    transition-duration: 0.8s;
+}
+
+.fade {
+    background-color: transparent;
+}

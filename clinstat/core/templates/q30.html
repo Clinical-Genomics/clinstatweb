@@ -1,6 +1,7 @@
 {%extends 'base.html' %}
 {% block title %}Run stats{% endblock title %}
 {% block main %}
+
 <div class="navbar-collapse collapse">
     <ul class="nav navbar-nav">
         <li><a href="{{ url_for('.q30') }}">All</a></li>
@@ -9,6 +10,9 @@
     {% endfor %}
     <ul>
 </div>
+
+<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+
 <table id="q30table" class="table table-striped tablesorter">
     <thead>
     <tr>
@@ -32,8 +36,11 @@
     {% else %}
     {% set q30class = 'q30good' %}
     {% endif %}
-    <tr>
-        <td>{{ row['run number'] }}</td>
+    <tr id="run{{ row['run number'] }}-{{ row['lane'] }}">
+        <td>
+            <a name="{{ row['run number'] }}-{{ row['lane'] }}"></a>
+            {{ row['run number'] }}
+        </td>
         <td>{{ row['run date'] }}</td>
         <td>{{ row['run name'] }}</td>
         <td>{{ row['flowcell name'] }}</td>
@@ -47,9 +54,142 @@
     </tbody>
 </table>
 
+<script src="{{ url_for('static', filename='highcharts/js/highcharts.js') }}"></script>
+
 <script>
-$(document).ready(function() { 
-  $("#q30table").tablesorter(); 
-}); 
+$(document).ready(function() {
+  $("#q30table").tablesorter();
+});
+</script>
+
+<script>
+$(document).ready(function(){
+    $('a[href^="#"]').bind('click.smoothscroll',function (e) {
+        e.preventDefault();
+    
+        var target = this.hash,
+        $target = $(target);
+    
+        $('html, body').stop().animate({
+            'scrollTop': $target.offset().top
+        }, 500, 'swing', function () {
+            window.location.hash = target;
+        });
+    });
+});
+</script>
+
+<script>
+var dates=[]
+$('#q30table tbody tr td:nth-child(2)').each(function() {
+    dates.unshift( $(this).text() );
+});
+
+var readcounts=[]
+$('#q30table tbody tr').each(function() {
+    var runname = $(this).children('td:eq(0)').text().trim();
+    var lane = $(this).children('td:eq(4)').text().trim();
+    var readcount = parseInt($(this).children('td:eq(5)').text())/1000000;
+    readcounts.unshift({
+        y: readcount,
+        runname: runname + '-' + lane
+    });
+});
+
+var q30=[]
+$('#q30table tr td:nth-child(8)').each(function() {
+    q30.unshift( parseFloat($(this).text()) );
+});
+
+$(document).ready(function () {
+    $('#container').highcharts({
+        chart: {
+            zoomType: 'xy'
+        },
+        title: {
+            text: 'readcounts (mil)'
+        },
+        subtitle: {
+            text: 'and q30%'
+        },
+        xAxis: [{
+            categories: dates,
+            minTickInterval: 20
+        }],
+        yAxis: [{ // Primary yAxis
+            labels: {
+                format: '{value}mil',
+                style: {
+                    color: Highcharts.getOptions().colors[1]
+                }
+            },
+            title: {
+                text: 'Readcounts',
+                style: {
+                    color: Highcharts.getOptions().colors[1]
+                }
+            }
+        }, { // Secondary yAxis
+            title: {
+                text: 'Q30%',
+                style: {
+                    color: Highcharts.getOptions().colors[0]
+                }
+            },
+            labels: {
+                format: '{value}%',
+                style: {
+                    color: Highcharts.getOptions().colors[0]
+                }
+            },
+            min: 0.0,
+            max: 100.0,
+            maxPadding: 0.0,
+            opposite: true
+        }],
+        tooltip: {
+            shared: true
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'left',
+            x: 120,
+            verticalAlign: 'top',
+            y: 50,
+            floating: true,
+            backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'
+        },
+        plotOptions: {
+            series: {
+                point: {
+                    events: {
+                        click: function () {
+                            $('#q30table tr td').removeClass('highlight-row');
+                            $('#run' + this.options.runname).children('td').addClass('highlight-row');
+
+                            $('html,body').animate({
+                                'scrollTop': $('#run'+this.options.runname).offset().top - 100
+                            }, 400);
+                        }
+                    }
+                }
+            }
+        },
+        series: [{
+            name: 'Readcounts',
+            type: 'column',
+            yAxis: 0,
+            data: readcounts,
+        }, {
+            name: 'Q30',
+            type: 'spline',
+            data: q30,
+            yAxis: 1,
+            tooltip: {
+                valueSuffix: '%'
+            }
+        }]
+    });
+});
 </script>
 {% endblock main %}
