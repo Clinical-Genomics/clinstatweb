@@ -126,6 +126,7 @@ def sample(samplename=None):
     """ select s.samplename, s.barcode, lane, yield_mb, passed_filter_pct, readcounts, raw_clusters_per_lane_pct, perfect_indexreads_pct, q30_bases_pct, mean_quality_score, f.flowcellname, flowcell_pos from sample s
     join unaligned u on u.sample_id = s.sample_id
     join flowcell f on f.flowcell_id = u.flowcell_id
+    join datasource d on d.datasource_id = f.datasource_id
     where s.samplename = ?  """
     rs = db.session.query(
             Sample.samplename.label('samplename'),
@@ -139,11 +140,15 @@ def sample(samplename=None):
             Unaligned.q30_bases_pct.label('q30_bases_pct'),
             Unaligned.mean_quality_score.label('mean_quality_score'),
             Flowcell.flowcellname.label('flowcellname'),
-            Flowcell.flowcell_pos.label('flowcell_pos')
+            Flowcell.flowcell_pos.label('flowcell_pos'),
+            Datasource.rundate.label('rundate')
         ).\
         outerjoin(Unaligned).\
         outerjoin(Flowcell).\
+        outerjoin(Datasource).\
         filter(or_(*samplenames)).\
         all()
 
-    return dict(out=rs, samplename=samplename)
+    fcs = list(set([row.flowcellname for row in rs])) # make uniq ;)
+
+    return dict(out=rs, samplename=samplename, fcs=fcs)

@@ -7,8 +7,12 @@
 <dl>
     <dt>Sample name</dt>
     <dd>{{ samplename }}</dd>
-    <dt></dt>
-    <dd></dd>
+    <dt>Flowcells</dt>
+    <dd>
+    {% for fc in fcs %}
+        {{ fc }}
+    {% endfor %}
+    </dd>
     <dt></dt>
     <dd></dd>
 </dl>
@@ -20,6 +24,7 @@
         {% if samplename is none %}
         <th>Samplename</th>
         {% endif %}
+        <th>Run date</th>
         <th>Barcode</th>
         <th>Lane</th>
         <th>Yield (Mb)</th>
@@ -39,6 +44,7 @@
         {% if samplename is none %}
         <td><a href="{{ url_for('.sample', samplename=row['samplename']) }}">{{ row['samplename'] }}</a></td>
         {% endif %}
+        <td>{{ row['rundate'] }}</td>
         <td>{{ row['barcode'] }}</td>
         <td>{{ row['lane'] }} </td>
         <td>{{ row['yield_mb'] }}</td>
