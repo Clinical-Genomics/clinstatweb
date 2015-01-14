@@ -18,7 +18,7 @@
 </dl>
 {% endif %}
 
-<table id="q30table" class="table table-striped tablesorter">
+<table id="sampletable" class="table table-striped tablesorter">
     <thead>
     <tr>
         {% if samplename is none %}
@@ -60,4 +60,10 @@
     {% endfor %}
     </tbody>
 </table>
+
+<script>
+$(document).ready(function() {
+  $("#sampletable").tablesorter();
+});
+</script>
 {% endblock main %}
