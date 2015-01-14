@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% from 'macros.html' import q30class %}
 {% block title %} Sample stats {% endblock title %}
 {% block main %}
 
@@ -34,8 +35,6 @@
     </thead>
     <tbody>
     {% for row in out %}
-    {% set q30_pct = row['q30_bases_pct'] %}
-    {% from 'macros.html' import q30class %}
     <tr>
         {% if samplename is none %}
         <td><a href="{{ url_for('.sample', samplename=row['samplename']) }}">{{ row['samplename'] }}</a></td>

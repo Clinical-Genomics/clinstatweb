@@ -1,4 +1,5 @@
 {%extends 'base.html' %}
+{% from 'macros.html' import q30class %}
 {% block title %}Run stats{% endblock title %}
 {% block main %}
 
@@ -29,13 +30,6 @@
     </thead>
     <tbody>
     {% for row in out %}
-    {% if row['q30 %']|float < 60.0 %}
-    {% set q30class = 'q30ugly' %}
-    {% elif row['q30 %']|float < 90.0 %}
-    {% set q30class = 'q30bad' %}
-    {% else %}
-    {% set q30class = 'q30good' %}
-    {% endif %}
     <tr id="run{{ row['run number'] }}-{{ row['lane'] }}">
         <td>
             <a name="{{ row['run number'] }}-{{ row['lane'] }}"></a>
@@ -47,7 +41,7 @@
         <td>{{ row['lane'] }}</td>
         <td>{{ row['readcounts'] }}</td>
         <td>{{ row['mil reads fc lane'] }}</td>
-        <td class="{{ q30class }}">{{ row['q30 %'] }}</td>
+        <td class="{{ q30class(row['q30 %']) }}">{{ row['q30 %'] }}</td>
         <td>{{ row['q30 mil reads fc lane'] }}</td>
     </tr>
     {% endfor %}
