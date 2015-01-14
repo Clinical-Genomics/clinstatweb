@@ -7,7 +7,7 @@ from flask.ext.sqlalchemy import get_debug_queries
 from sqlalchemy import or_
 
 from ..extensions import db
-from ..models import Project, Datasource, Flowcell, Unaligned
+from ..models import Project, Datasource, Flowcell, Unaligned, Sample
 from ..helpers import templated
 
 core = Blueprint('core', __name__, template_folder='templates')
@@ -87,7 +87,7 @@ def q30(machinename=None):
             fcq30 = q30sum/int(row.readcounts)
         else:
             fcq30 = 0
-        rows.append( 
+        rows.append(
             {
                 'run number': row.run_number,
                 'run date': row.rundate,
@@ -114,5 +114,36 @@ def q30(machinename=None):
 
     return dict(out=rows, machines=machines)
 
+@core.route('/sample')
+@core.route('/sample/<samplename>')
+@templated('sample.html')
+def sample(samplename=None):
 
+    samplenames = []
+    if samplename is not None:
+        samplenames.append(Sample.samplename == samplename)
 
+    """ select s.samplename, s.barcode, lane, yield_mb, passed_filter_pct, readcounts, raw_clusters_per_lane_pct, perfect_indexreads_pct, q30_bases_pct, mean_quality_score, f.flowcellname, flowcell_pos from sample s
+    join unaligned u on u.sample_id = s.sample_id
+    join flowcell f on f.flowcell_id = u.flowcell_id
+    where s.samplename = ?  """
+    rs = db.session.query(
+            Sample.samplename.label('samplename'),
+            Sample.barcode.label('barcode'),
+            Unaligned.lane.label('lane'),
+            Unaligned.yield_mb.label('yield_mb'),
+            Unaligned.passed_filter_pct.label('passed_filter_pct'),
+            db.func.round(Unaligned.readcounts/1000000,1).label('readcounts'),
+            Unaligned.raw_clusters_per_lane_pct.label('raw_clusters_per_labe_pct'),
+            Unaligned.perfect_indexreads_pct.label('perfect_indexreads_pct'),
+            Unaligned.q30_bases_pct.label('q30_bases_pct'),
+            Unaligned.mean_quality_score.label('mean_quality_score'),
+            Flowcell.flowcellname.label('flowcellname'),
+            Flowcell.flowcell_pos.label('flowcell_pos')
+        ).\
+        outerjoin(Unaligned).\
+        outerjoin(Flowcell).\
+        filter(or_(*samplenames)).\
+        all()
+
+    return dict(out=rs, samplename=samplename)

@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %} Sample stats {% endblock title %}
+{% block main %}
+
+{% if samplename is not none %}
+<dl>
+    <dt>Sample name</dt>
+    <dd>{{ samplename }}</dd>
+    <dt></dt>
+    <dd></dd>
+    <dt></dt>
+    <dd></dd>
+</dl>
+{% endif %}
+
+<table id="q30table" class="table table-striped tablesorter">
+    <thead>
+    <tr>
+        {% if samplename is none %}
+        <th>Samplename</th>
+        {% endif %}
+        <th>Barcode</th>
+        <th>Lane</th>
+        <th>Yield (Mb)</th>
+        <th>Passed filter (%)</th>
+        <th>Readcounts (mil)</th>
+        <th>Raw Clusters (%)</th>
+        <th>Perfect Indexreads</th>
+        <th>q30 %</th>
+        <th>Mean QC</th>
+        <th>Flowcell</th>
+        <th>Position</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for row in out %}
+    {% set q30_pct = row['q30_bases_pct'] %}
+    {% from 'macros.html' import q30class %}
+    <tr>
+        {% if samplename is none %}
+        <td><a href="{{ url_for('.sample', samplename=row['samplename']) }}">{{ row['samplename'] }}</a></td>
+        {% endif %}
+        <td>{{ row['barcode'] }}</td>
+        <td>{{ row['lane'] }} </td>
+        <td>{{ row['yield_mb'] }}</td>
+        <td>{{ row['passed_filter_pct'] }}</td>
+        <td>{{ row['readcounts'] }}</td>
+        <td>{{ row['raw_clusters_per_lane_pct'] }}</td>
+        <td>{{ row['perfect_indexreads_pct'] }}</td>
+        <td class="{{ q30class(row['q30_bases_pct']) }}">{{ row['q30_bases_pct'] }}</td>
+        <td>{{ row['mean_quality_score'] }}</td>
+        <td>{{ row['flowcellname'] }}</td>
+        <td>{{ row['flowcell_pos'] }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock main %}

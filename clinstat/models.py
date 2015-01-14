@@ -83,7 +83,7 @@ class Unaligned(db.Model):
     yield_mb = db.Column(db.Integer, nullable=True)
     passed_filter_pct = db.Column(db.Numeric(10,5), nullable=True)
     readcounts = db.Column(db.Integer, nullable=True)
-    raw_cluster_per_lane_pct = db.Column(db.Numeric(10,5), nullable=True)
+    raw_clusters_per_lane_pct = db.Column(db.Numeric(10,5), nullable=True)
     perfect_indexreads_pct = db.Column(db.Numeric(10,5), nullable=True)
     q30_bases_pct = db.Column(db.Numeric(10,5), nullable=True)
     mean_quality_score = db.Column(db.Numeric(10,5), nullable=True)
