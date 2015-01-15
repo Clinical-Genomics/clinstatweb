@@ -93,3 +93,30 @@ class Unaligned(db.Model):
 
     flowcell = db.relationship('Flowcell', backref=db.backref('unaligned'))
     sample = db.relationship('Sample', backref=db.backref('unaligned'))
+
+class Backup(db.Model):
+    __tablename__ = 'backup'
+
+    runname = db.Column(db.String(255), primary_key=True)
+    startdate = db.Column(db.Date, nullable=False)
+    nas = db.Column(db.String(255), nullable=True)
+    nasdir = db.Column(db.String(255), nullable=True)
+    starttonas = db.Column(db.DateTime, nullable=True)
+    endtonas = db.Column(db.DateTime, nullable=True)
+    preproc = db.Column(db.String(255), nullable=True)
+    preprocdir = db.Column(db.String(255), nullable=True)
+    startpreproc = db.Column(db.DateTime, nullable=True)
+    endpreproc = db.Column(db.DateTime, nullable=True)
+    frompreproc = db.Column(db.DateTime, nullable=True)
+    analysis = db.Column(db.String(255), nullable=True)
+    analysisdir = db.Column(db.String(255)    , nullable=True)
+    toanalysis = db.Column(db.DateTime, nullable=True)
+    fromanalysis = db.Column(db.DateTime, nullable=True)
+    backup = db.Column(db.String(255), nullable=True)
+    backupdir = db.Column(db.String(255), nullable=True)
+    tobackup = db.Column(db.DateTime, nullable=True)
+    frombackup = db.Column(db.DateTime, nullable=True)
+    tape = db.Column(db.String(255), nullable=True)
+    tapedir = db.Column(db.String(255), nullable=True)
+    totape = db.Column(db.DateTime, nullable=True)
+    fromtape = db.Column(db.DateTime, nullable=True)

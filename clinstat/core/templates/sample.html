@@ -4,18 +4,16 @@
 {% block main %}
 
 {% if samplename is not none %}
-<dl>
-    <dt>Sample name</dt>
-    <dd>{{ samplename }}</dd>
-    <dt>Flowcells</dt>
-    <dd>
-    {% for fc in fcs %}
-        {{ fc }}
-    {% endfor %}
-    </dd>
-    <dt></dt>
-    <dd></dd>
-</dl>
+<table id="terms" class="table table-striped">
+    <tr>
+        <td>Sample name</td>
+        <td>{{ samplename }}</td>
+    </tr>
+    <tr>
+        <td>Flowcells</td>
+        <td>{% for fc in fcs %} {{ fc }} {% endfor %}</td>
+    </tr>
+</table>
 {% endif %}
 
 <table id="sampletable" class="table table-striped tablesorter">
@@ -25,6 +23,7 @@
         <th>Samplename</th>
         {% endif %}
         <th>Run date</th>
+        <th>Run name</th>
         <th>Barcode</th>
         <th>Lane</th>
         <th>Yield (Mb)</th>
@@ -45,6 +44,7 @@
         <td><a href="{{ url_for('.sample', samplename=row['samplename']) }}">{{ row['samplename'] }}</a></td>
         {% endif %}
         <td>{{ row['rundate'] }}</td>
+        <td>{{ row['runname'] }}</td>
         <td>{{ row['barcode'] }}</td>
         <td>{{ row['lane'] }} </td>
         <td>{{ row['yield_mb'] }}</td>

@@ -7,7 +7,7 @@ from flask.ext.sqlalchemy import get_debug_queries
 from sqlalchemy import or_
 
 from ..extensions import db
-from ..models import Project, Datasource, Flowcell, Unaligned, Sample
+from ..models import Project, Datasource, Flowcell, Unaligned, Sample, Backup
 from ..helpers import templated
 
 core = Blueprint('core', __name__, template_folder='templates')
@@ -141,7 +141,8 @@ def sample(samplename=None):
             Unaligned.mean_quality_score.label('mean_quality_score'),
             Flowcell.flowcellname.label('flowcellname'),
             Flowcell.flowcell_pos.label('flowcell_pos'),
-            Datasource.rundate.label('rundate')
+            Datasource.rundate.label('rundate'),
+            Datasource.runname.label('runname')
         ).\
         outerjoin(Unaligned).\
         outerjoin(Flowcell).\
@@ -149,6 +150,12 @@ def sample(samplename=None):
         filter(or_(*samplenames)).\
         all()
 
+    # get all the flowcells in one neat list
     fcs = list(set([row.flowcellname for row in rs])) # make uniq ;)
+    runnames = list(set([Backup.runname == row.runname for row in rs]))
+
+    # get the progress of this sample
+    backup = db.session.query(Backup).filter(or_(*runnames)).all()
+
 
     return dict(out=rs, samplename=samplename, fcs=fcs)
