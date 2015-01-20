@@ -68,7 +68,8 @@ def q30(machinename=None):
             db.func.round(db.func.sum(Unaligned.readcounts)/(2000000), 1).label('mil_reads_fc_lane'),\
             db.func.group_concat(Unaligned.q30_bases_pct*Unaligned.readcounts).label('q30_readcounts'),\
             Datasource.datasource_id.label('run_number'),\
-            Datasource.rundate.label('rundate')\
+            Datasource.rundate.label('rundate'),
+            Datasource.machine.label('machinename')
         ).\
         outerjoin(Flowcell).\
         outerjoin(Unaligned).\
@@ -92,6 +93,7 @@ def q30(machinename=None):
                 'run number': row.run_number,
                 'run date': row.rundate,
                 'run name': row.runname,
+                'machine name': row.machinename,
                 'flowcell name': row.flowcellname,
                 'lane': row.lane,
                 'readcounts': row.readcounts,
@@ -112,7 +114,7 @@ def q30(machinename=None):
     machines = [ row.machine_name for row in machines_rs ]
 
 
-    return dict(out=rows, machines=machines)
+    return dict(out=rows, machines=machines, machinename=machinename)
 
 @core.route('/sample')
 @core.route('/sample/<samplename>')

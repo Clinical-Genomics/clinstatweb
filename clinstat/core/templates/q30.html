@@ -19,7 +19,11 @@
     <tr>
         <th>Run #</th>
         <th>Date</th>
+        {% if machinename is none %}
+        <th>Machine name</th>
+        {% else %}
         <th>Run name</th>
+        {% endif %}
         <th>Flowcell</th>
         <th>Lane</th>
         <th>readcounts</th>
@@ -36,7 +40,11 @@
             {{ row['run number'] }}
         </td>
         <td>{{ row['run date'] }}</td>
+        {% if machinename is none %}
+        <td><a href="{{ url_for('.q30', machinename=row['machine name']) }}">{{ row['machine name'] }}</td>
+        {% else %}
         <td>{{ row['run name'] }}</td>
+        {% endif %}
         <td>{{ row['flowcell name'] }}</td>
         <td>{{ row['lane'] }}</td>
         <td>{{ row['readcounts'] }}</td>
