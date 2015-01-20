@@ -1,7 +1,7 @@
 {% macro q30class(q30_pct) %}
 {% if q30_pct|float < 60.0 %}
 q30ugly
-{% elif q30_pct|float < 90.0 %}
+{% elif q30_pct|float < 80.0 %}
 q30bad
 {% else %}
 q30good
