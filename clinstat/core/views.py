@@ -58,6 +58,8 @@ def q30(machinename=None):
     FROM datasource
     LEFT JOIN flowcell ON datasource.datasource_id = flowcell.datasource_id
     LEFT JOIN unaligned ON unaligned.flowcell_id = flowcell.flowcell_id
+    LEFT JOIN sample ON sample.sample_id = unaligned.sample_id
+    WHERE sample.project_id != 2
     GROUP BY unaligned.flowcell_id, lane
     ORDER BY rundate, flowcellname, lane """
     rs = db.session.query(
@@ -73,9 +75,11 @@ def q30(machinename=None):
         ).\
         outerjoin(Flowcell).\
         outerjoin(Unaligned).\
+        outerjoin(Sample).\
+        filter(Sample.project_id != 2).\
         filter(or_(*machinenames)).\
         group_by(Unaligned.flowcell_id, Unaligned.lane).\
-        order_by(Datasource.rundate.desc(), Flowcell.flowcellname, Unaligned.lane).\
+        order_by(Datasource.rundate.desc(), Datasource.datasource_id.desc(),  Flowcell.flowcellname, Unaligned.lane).\
         all()
 
     rows = []
