@@ -5,9 +5,14 @@
 
 <div class="navbar-collapse collapse">
     <ul class="nav navbar-nav">
-        <li><a href="{{ url_for('.q30') }}">All</a></li>
+        <li class="hilight_machine"><a href="{{ url_for('.q30') }}">All</a></li>
     {% for machine in machines %}
-    <li><a href="{{ url_for('.q30', machinename=machine) }}">{{ machine }}</a></li>
+    {% if machinename == machine  %}
+    {% set hilight_machine_class = 'hilight_machine' %}
+    {% else %}
+    {% set hilight_machine_class = 'unhilight_machine' %}
+    {% endif %}
+    <li class="{{ hilight_machine_class }}"><a href="{{ url_for('.q30', machinename=machine) }}">{{ machine }}</a></li>
     {% endfor %}
     <ul>
 </div>
