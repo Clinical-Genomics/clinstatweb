@@ -58,11 +58,24 @@ class Datasource(db.Model):
     def __repr__(self):
         return (u'{self.__class__.__name__}: {self.runname}'.format(self=self))
 
+class Demux(db.Model):
+    __tablename__ = 'demux'
+
+    demux_id = db.Column(db.Integer, primary_key=True)
+    flowcell_id = db.Column(db.Integer, db.ForeignKey('flowcell.flowcell_id'), nullable=False)
+    datasource_id = db.Column(db.Integer, db.ForeignKey('datasource.datasource_id'), nullable=False)
+    basemask = db.Column(db.String(255), nullable=True)
+    time = db.Column(db.DateTime, nullable=True)
+
+    db.UniqueConstraint('flowcell', 'basemask', name='demux_ibuk_1')
+
+    datasource = db.relationship('Datasource', backref=db.backref('demuxes'))
+    datasource = db.relationship('Flowcell', backref=db.backref('demuxes'))
+
 class Flowcell(db.Model):
     __tablename__ = 'flowcell'
 
     flowcell_id = db.Column(db.Integer, primary_key=True)
-    datasource_id = db.Column(db.Integer, db.ForeignKey('datasource.datasource_id'), nullable=False)
     flowcellname = db.Column(db.String(255), nullable=False)
     flowcell_pos = db.Column(db.Enum('A', 'B'), nullable=False)
     time_start = db.Column(db.DateTime, nullable=True)
@@ -71,14 +84,14 @@ class Flowcell(db.Model):
 
     db.UniqueConstraint('flowcellname', name='flowcellname')
 
-    datasource = db.relationship('Datasource', backref=db.backref('flowcells'))
+    datasource = db.relationship('Demux', backref=db.backref('flowcells'))
 
 class Unaligned(db.Model):
     __tablename__ = 'unaligned'
 
     unaligned_id = db.Column(db.Integer, primary_key=True)
     sample_id = db.Column(db.Integer, db.ForeignKey('sample.sample_id'), nullable=False)
-    flowcell_id = db.Column(db.Integer, db.ForeignKey('flowcell.flowcell_id'), nullable=False)
+    demux_id = db.Column(db.Integer, db.ForeignKey('demux.demux_id'), nullable=False)
     lane = db.Column(db.Integer, nullable=True)
     yield_mb = db.Column(db.Integer, nullable=True)
     passed_filter_pct = db.Column(db.Numeric(10,5), nullable=True)
@@ -88,10 +101,8 @@ class Unaligned(db.Model):
     q30_bases_pct = db.Column(db.Numeric(10,5), nullable=True)
     mean_quality_score = db.Column(db.Numeric(10,5), nullable=True)
     time = db.Column(db.DateTime, nullable=True)
-    
-    db.UniqueConstraint(flowcell_id, sample_id, lane, name='unaligned_ibuk')
 
-    flowcell = db.relationship('Flowcell', backref=db.backref('unaligned'))
+    demux = db.relationship('Demux', backref=db.backref('unaligned'))
     sample = db.relationship('Sample', backref=db.backref('unaligned'))
 
 class Backup(db.Model):

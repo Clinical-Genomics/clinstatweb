@@ -7,7 +7,7 @@ from flask.ext.sqlalchemy import get_debug_queries
 from sqlalchemy import or_
 
 from ..extensions import db
-from ..models import Project, Datasource, Flowcell, Unaligned, Sample, Backup
+from ..models import Project, Datasource, Flowcell, Unaligned, Sample, Backup, Demux
 from ..helpers import templated
 
 core = Blueprint('core', __name__, template_folder='templates')
@@ -19,12 +19,13 @@ def index():
 @core.route('/')
 @templated('runs.html')
 def runs():
-    """SELECT YEAR(rundate) AS year, MONTH(rundate) AS month, COUNT(DISTINCT datasource.datasource_id) AS runs,
+    """ SELECT YEAR(rundate) AS year, MONTH(rundate) AS month, COUNT(DISTINCT datasource.datasource_id) AS runs,
     ROUND(SUM(readcounts)/2000000, 2) AS "mil reads",
     ROUND(SUM(readcounts)/(2000000*COUNT(DISTINCT datasource.datasource_id)),1) AS "mil reads/fc lane"
     FROM datasource
-    LEFT JOIN flowcell ON datasource.datasource_id = flowcell.datasource_id
-    LEFT JOIN unaligned ON unaligned.flowcell_id = flowcell.flowcell_id
+    LEFT JOIN demux ON demux.datasource_id = datasource.datasource_id
+    LEFT JOIN flowcell ON demux.flowcell_id = flowcell.flowcell_id
+    LEFT JOIN unaligned ON unaligned.demux_id = demux.demux_id
     GROUP BY YEAR(rundate), MONTH(rundate)
     ORDER BY YEAR(rundate), MONTH(rundate), DAY(rundate); """
     rs = db.session.query(
@@ -34,6 +35,7 @@ def runs():
                 db.func.round(db.func.sum(Unaligned.readcounts / 2000000), 2).label('mil reads'),\
                 db.func.round(db.func.sum(Unaligned.readcounts) / (db.func.count(Datasource.datasource_id.distinct())*2000000), 1).label('mil reads fc lane')
             ).\
+            outerjoin(Demux).\
             outerjoin(Flowcell).\
             outerjoin(Unaligned).\
             group_by(db.func.year(Datasource.rundate), db.func.month(Datasource.rundate)).\
@@ -56,8 +58,9 @@ def q30(machinename=None):
     ROUND(SUM(readcounts)/(2000000),1) AS "mil reads/fc lane",
     GROUP_CONCAT(q30_bases_pct*readcounts), datasource.datasource_id, rundate
     FROM datasource
-    LEFT JOIN flowcell ON datasource.datasource_id = flowcell.datasource_id
-    LEFT JOIN unaligned ON unaligned.flowcell_id = flowcell.flowcell_id
+    LEFT JOIN demux ON demux.datasource_id = datasource.datasource_id
+    LEFT JOIN flowcell ON demux.flowcell_id = flowcell.flowcell_id
+    LEFT JOIN unaligned ON unaligned.demux_id = demux.demux_id
     LEFT JOIN sample ON sample.sample_id = unaligned.sample_id
     WHERE sample.project_id != 2
     GROUP BY unaligned.flowcell_id, lane
@@ -73,12 +76,13 @@ def q30(machinename=None):
             Datasource.rundate.label('rundate'),
             Datasource.machine.label('machinename')
         ).\
+        outerjoin(Demux).\
         outerjoin(Flowcell).\
         outerjoin(Unaligned).\
         outerjoin(Sample).\
         filter(Sample.project_id != 2).\
         filter(or_(*machinenames)).\
-        group_by(Unaligned.flowcell_id, Unaligned.lane).\
+        group_by(Demux.flowcell_id, Unaligned.lane).\
         order_by(Datasource.rundate.desc(), Datasource.datasource_id.desc(),  Flowcell.flowcellname, Unaligned.lane).\
         all()
 
