@@ -127,26 +127,26 @@ $(document).ready(function () {
             labels: {
                 format: '{value}mil',
                 style: {
-                    color: Highcharts.getOptions().colors[1]
+                    color: Highcharts.getOptions().colors[0]
                 }
             },
             title: {
                 text: 'Readcounts',
                 style: {
-                    color: Highcharts.getOptions().colors[1]
+                    color: Highcharts.getOptions().colors[0]
                 }
             }
         }, { // Secondary yAxis
             title: {
                 text: 'Q30%',
                 style: {
-                    color: Highcharts.getOptions().colors[0]
+                    color: Highcharts.getOptions().colors[1]
                 }
             },
             labels: {
                 format: '{value}%',
                 style: {
-                    color: Highcharts.getOptions().colors[0]
+                    color: Highcharts.getOptions().colors[1]
                 }
             },
             plotBands: [{
@@ -197,6 +197,7 @@ $(document).ready(function () {
             type: 'column',
             yAxis: 0,
             data: readcounts,
+            turboThreshold: 5000,
         }, {
             name: 'Q30',
             type: 'spline',
